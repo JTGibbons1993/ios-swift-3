@@ -4,16 +4,14 @@
 
 ![Platform iOS](https://img.shields.io/badge/nanodegree-iOS-blue.svg)
 
-This repository contains resources for Beginning iOS and Udacity's Learning Swift course.
+This repository contains many files dedicated to learning different elements of iOS app building.
 
 ## Overview
 
-Beginning iOS covers a broad range of topics mainly in the form of Xcode playgrounds. The playgrounds are grouped by their related project and include examples and problems for you to try.
+Beginning iOS covers a broad range of topics mainly in the form of Xcode playgrounds and projects
 
 ## Setup
 
-Most projects and playgrounds contained in this repository should run without any additional setup. There are a few playgrounds, however, where small fixes must be made before they will successfully run. In those cases, consult the classroom or comments left in the code to resolve.
+Most projects and playgrounds contained in this repository should run without any additional setup.
 
-## Maintainers
 
-@jarrodparkes
