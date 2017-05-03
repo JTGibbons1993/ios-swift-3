@@ -14,7 +14,9 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     @IBOutlet weak var cameraButton: UIBarButtonItem!
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var otherTextField: UITextField!
-    @IBOutlet weak var shareButton: UIButton!
+    @IBOutlet weak var shareButton: UIBarButtonItem!
+    @IBOutlet weak var toolBar: UIToolbar!
+    @IBOutlet weak var albumButton: UIBarButtonItem!
     
 //Meme Struct
     struct Meme{
@@ -30,20 +32,23 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
      NSStrokeColorAttributeName: UIColor.black,
      NSForegroundColorAttributeName: UIColor.white,
      NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-     NSStrokeWidthAttributeName: -6.0]
-
+     NSStrokeWidthAttributeName: -3.6]
+    
+    func setupTextField(_ textField: UITextField, defaultText: String) {
+        //Formatting
+        textField.delegate = self
+        textField.text = defaultText
+        textField.defaultTextAttributes = memeTextAttributes
+     
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        textField.defaultTextAttributes = memeTextAttributes
-        otherTextField.defaultTextAttributes = memeTextAttributes
-        textField.text = "BOTTOM"
-        otherTextField.text = " TOP"
-    
-//calls delegate functions to return on hitting return button and clear only default text when editing starts
-        textField.delegate = self
-        otherTextField.delegate = self
+        //keyboard subscription
+          subscribeToKeyboardNotifications()
+        // text field attributes
+        setupTextField(otherTextField, defaultText: " TOP")
+        setupTextField(textField, defaultText: "BOTTOM")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -67,21 +72,54 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         textField.resignFirstResponder()
         return true
     }
+//sign up to be notified when the keyboard appears
+    func subscribeToKeyboardNotifications() {
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    func unsubscribeFromKeyboardNotifications() {
+        
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+    }
+//When the keyboardWillShow notification is received, shift the view's frame up
+    func keyboardWillShow(_ notification:Notification) {
+        if textField.isFirstResponder {
+            view.frame.origin.y = 0 - getKeyboardHeight(notification)
+        }
+    }
+//Shift the view frame back down to 0
+    func keyboardWillHide(_ notification:Notification) {
+        if textField.isFirstResponder{
+            view.frame.origin.y += getKeyboardHeight(notification)
+        }
+    }
+    
+    func getKeyboardHeight(_ notification:Notification) -> CGFloat {
+        
+        let userInfo = notification.userInfo
+        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue // of CGRect
+        return keyboardSize.cgRectValue.height
+    }
     
     
 //UIImage Picker functions - Album and Camera
-    @IBAction func pickAnImageFromAlbum(_ sender: Any) {
+    func presentImagePicker(_ chosenSource: UIImagePickerControllerSourceType) {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
         present(imagePicker, animated: true, completion: nil)
+        //choose source for photos
+        imagePicker.sourceType = chosenSource
+    }
+    @IBAction func pickAnImageFromAlbum(_ sender: Any) {
+        presentImagePicker(.photoLibrary)
     }
    
     @IBAction func pickAnImageFromCamera(_ sender: Any) {
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .camera
-        present(imagePicker, animated: true, completion: nil)
+        presentImagePicker(.camera)
     }
     
 //UI Image Picker Delegate Methods
@@ -106,8 +144,11 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     func generateMemedImage() -> UIImage {
         //hide navbar and toolbar
-        self.navigationController?.isNavigationBarHidden = true
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         self.navigationController?.setToolbarHidden(true, animated: true)
+        toolBar.isHidden = true
+        albumButton.accessibilityElementsHidden = true
+        cameraButton.accessibilityElementsHidden = true
        
         // Render view to an image
         UIGraphicsBeginImageContext(self.view.frame.size)
@@ -116,12 +157,16 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         UIGraphicsEndImageContext()
         
         //show navbar and toolbar
-        self.navigationController?.isNavigationBarHidden = false
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
         self.navigationController?.setToolbarHidden(false, animated: false)
+        toolBar.isHidden = false
+        albumButton.accessibilityElementsHidden = false
+        cameraButton.accessibilityElementsHidden = false
         
         return memedImage
     }
 
+  
 //Share button action steps
     @IBAction func shareMeme(_ sender: Any) {
         //generate meme
