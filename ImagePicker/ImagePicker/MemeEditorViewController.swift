@@ -26,13 +26,19 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         var memedImage: UIImage
     }
      var newMeme: Meme!
+    let paragraphStyle = NSMutableParagraphStyle()
     
 //textfield attributes to create meme
-     let memeTextAttributes:[String:Any] = [
+    let memeTextAttributes:[String:Any] = {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        
+        return[
      NSStrokeColorAttributeName: UIColor.black,
      NSForegroundColorAttributeName: UIColor.white,
      NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-     NSStrokeWidthAttributeName: -3.6]
+     NSStrokeWidthAttributeName: -3.6,
+     NSParagraphStyleAttributeName: paragraphStyle] }()
     
     func setupTextField(_ textField: UITextField, defaultText: String) {
         //Formatting
@@ -47,7 +53,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         //keyboard subscription
           subscribeToKeyboardNotifications()
         // text field attributes
-        setupTextField(otherTextField, defaultText: " TOP")
+        setupTextField(otherTextField, defaultText: "TOP")
         setupTextField(textField, defaultText: "BOTTOM")
     }
     
@@ -64,7 +70,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
 // UI Text Delegate Functions - clears default text and hides keyboard on hitting Return
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        if (textField.text == "BOTTOM" || textField.text == " TOP"){
+        if (textField.text == "BOTTOM" || textField.text == "TOP"){
                textField.text = ""
         }
     }
@@ -124,8 +130,6 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
 //UI Image Picker Delegate Methods
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo: [String : Any]){
-      //  let image = didFinishPickingMediaWithInfo.index(forKey: "UIImagePickerControllerOriginalImage") as! UIImage
-      
         if let image = didFinishPickingMediaWithInfo["UIImagePickerControllerOriginalImage"] as? UIImage {
             imagePickerView.image = image
         }
@@ -139,29 +143,26 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
 //Initializes meme model object
     func save(){
         // Create the meme
-        let meme = Meme(topText: otherTextField.text!, bottomText: textField.text!, originalImage: imagePickerView.image!, memedImage: generateMemedImage())
+        _ = Meme(topText: otherTextField.text!, bottomText: textField.text!, originalImage: imagePickerView.image!, memedImage: generateMemedImage())
     }
     
+    func navAndToolBarHide(_ hide: Bool){
+        self.navigationController?.setNavigationBarHidden(hide, animated: hide)
+        toolBar.isHidden = hide
+        albumButton.accessibilityElementsHidden = hide
+        cameraButton.accessibilityElementsHidden = hide
+        
+    }
     func generateMemedImage() -> UIImage {
-        //hide navbar and toolbar
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
-        self.navigationController?.setToolbarHidden(true, animated: true)
-        toolBar.isHidden = true
-        albumButton.accessibilityElementsHidden = true
-        cameraButton.accessibilityElementsHidden = true
-       
-        // Render view to an image
+//hide navbar and toolbar
+        navAndToolBarHide(true)
+// Render view to an image
         UIGraphicsBeginImageContext(self.view.frame.size)
         view.drawHierarchy(in: self.view.frame, afterScreenUpdates: true)
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
-        
-        //show navbar and toolbar
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
-        self.navigationController?.setToolbarHidden(false, animated: false)
-        toolBar.isHidden = false
-        albumButton.accessibilityElementsHidden = false
-        cameraButton.accessibilityElementsHidden = false
+//show navbar and toolbar
+        navAndToolBarHide(false)
         
         return memedImage
     }
