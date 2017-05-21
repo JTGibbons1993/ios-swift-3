@@ -21,7 +21,7 @@ class SentMemesTableViewController: UIViewController, UITableViewDataSource, UIT
 
     //Table View Data Source
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return memes!.count
+        return memes.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -39,7 +39,7 @@ class SentMemesTableViewController: UIViewController, UITableViewDataSource, UIT
         // Grab the VC from Storyboard  
       let editorVC = storyboard?.instantiateViewController(withIdentifier: "ImageViewController") as! ImageViewController
          //Populate view controller with data from the selected item
-      editorVC.meme = memes?[indexPath.row]
+      editorVC.meme = memes[indexPath.row]
         // Present the view controller using navigation
       self.navigationController!.pushViewController(editorVC, animated: true)
     }
