@@ -5,7 +5,7 @@
 //  Created by user on 4/22/17.
 //  Copyright © 2017 Udacity. All rights reserved.
 //
-
+import Foundation
 import UIKit
 
 class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate{
@@ -18,14 +18,8 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     @IBOutlet weak var toolBar: UIToolbar!
     @IBOutlet weak var albumButton: UIBarButtonItem!
     
-//Meme Struct
-    struct Meme{
-        var topText: String
-        var bottomText: String
-        var originalImage: UIImage
-        var memedImage: UIImage
-    }
-     var newMeme: Meme!
+
+    var newMeme: Meme!
     let paragraphStyle = NSMutableParagraphStyle()
     
 //textfield attributes to create meme
@@ -45,7 +39,6 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         textField.delegate = self
         textField.text = defaultText
         textField.defaultTextAttributes = memeTextAttributes
-     
     }
     
     override func viewDidLoad() {
@@ -144,8 +137,11 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     func save(){
         // Create the meme
         let meme = Meme(topText: otherTextField.text!, bottomText: textField.text!, originalImage: imagePickerView.image!, memedImage: generateMemedImage())
-// add meme to the array in App Delegate
-        (UIApplication.shared.delegate as! AppDelegate).memes.append(meme)
+// Add saved meme to the memes array in the Application Delegate
+        let object = UIApplication.shared.delegate
+        let appDelegate = object as! AppDelegate
+            appDelegate.memes.append(meme)
+
     }
     
     func navAndToolBarHide(_ hide: Bool){
@@ -196,6 +192,12 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
 
 }
     
-
+//Meme Struct
+struct Meme{
+    var topText: String
+    var bottomText: String
+    var originalImage: UIImage
+    var memedImage: UIImage
+}
 
 
