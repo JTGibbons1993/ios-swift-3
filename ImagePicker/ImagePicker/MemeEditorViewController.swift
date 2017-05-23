@@ -140,8 +140,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
 // Add saved meme to the memes array in the Application Delegate
         let object = UIApplication.shared.delegate
         let appDelegate = object as! AppDelegate
-            appDelegate.memes.append(meme)
-
+             appDelegate.memes.append(meme)
     }
     
     func navAndToolBarHide(_ hide: Bool){

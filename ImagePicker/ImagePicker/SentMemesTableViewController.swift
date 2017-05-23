@@ -11,37 +11,37 @@ import UIKit
 
 class SentMemesTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
    
-    let memes = (UIApplication.shared.delegate as! AppDelegate).memes
     @IBOutlet var memeTableView: UITableView!
     
     override func viewWillAppear(_ animated: Bool) {
-        memeTableView.delegate = self
         memeTableView.reloadData()
     }
 
     //Table View Data Source
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return memes.count
+        return (UIApplication.shared.delegate as! AppDelegate).memes.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // deqeue cell
+    // deqeue cell
         let cell = tableView.dequeueReusableCell(withIdentifier: "MemeTableCell")!
-        //collect cell data
+    //collect cell data
         let memeImage = (UIApplication.shared.delegate as! AppDelegate).memes[(indexPath as NSIndexPath).row]
-        // Set image
+    // Set image
          cell.imageView!.image = memeImage.memedImage
-
-        return cell
+    //detail text
+        cell.textLabel?.text = "\(memeImage.topText) / \(memeImage.bottomText)"
+    return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // Grab the VC from Storyboard  
-      let editorVC = storyboard?.instantiateViewController(withIdentifier: "ImageViewController") as! ImageViewController
-         //Populate view controller with data from the selected item
-      editorVC.meme = memes[indexPath.row]
-        // Present the view controller using navigation
-      self.navigationController!.pushViewController(editorVC, animated: true)
+        let memes = (UIApplication.shared.delegate as! AppDelegate).memes
+    // Grab the VC from Storyboard
+        let imageVC = storyboard?.instantiateViewController(withIdentifier: "ImageViewController") as! ImageViewController
+    //Populate view controller with data from the selected item
+        imageVC.meme = memes[indexPath.row]
+    // Present the view controller using navigation
+        self.navigationController!.pushViewController(imageVC, animated: true)
     }
 
 }
