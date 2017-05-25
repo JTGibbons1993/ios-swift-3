@@ -11,19 +11,18 @@ import UIKit
 
 class SentMemesCollectionViewController: UICollectionViewController{
     
-    @IBOutlet var memeCollectionView: UICollectionView!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
       //Implement flowLayout here ?
-        memeCollectionView.reloadData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        collectionView?.reloadData()
     }
     
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print("meme count")
-        print((UIApplication.shared.delegate as! AppDelegate).memes.count)
-        
         return (UIApplication.shared.delegate as! AppDelegate).memes.count
     }
     
