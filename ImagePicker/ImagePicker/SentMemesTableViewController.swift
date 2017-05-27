@@ -14,6 +14,7 @@ class SentMemesTableViewController: UIViewController, UITableViewDataSource, UIT
     @IBOutlet var memeTableView: UITableView!
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         memeTableView.reloadData()
     }
 
@@ -30,7 +31,7 @@ class SentMemesTableViewController: UIViewController, UITableViewDataSource, UIT
     // Set image
          cell.imageView!.image = memeImage.memedImage
     //detail text
-        cell.textLabel?.text = "\(memeImage.topText) / \(memeImage.bottomText)"
+        cell.textLabel?.text = "\(memeImage.topText) ... \(memeImage.bottomText)"
     return cell
     }
     
